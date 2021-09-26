@@ -28,10 +28,10 @@ module.exports = {
             } else if (!message.member.voice.channel) return message.reply('음성 채널에 먼저 연결해주세요!')
         }
 
-        // try {
+        try {
             command.execute(message, client, commandArgs)
-        // } catch (error) {
-        //     message.reply(`에러가 발생했어요! :( => ${error}`)
-        // }
+        } catch (error) {
+            message.reply(`에러가 발생했어요! :( => ${error}`)
+        }
     }
 }

@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders')
 const { MessageEmbed } = require('discord.js')
+const { element } = require('../../../functions')
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -9,21 +10,10 @@ module.exports = {
     number_of_elements: 3,
     voice_permission_check: true,
     execute(message, client, commandArgs) {
-        const musicIform = client.musiclist.get(message.guild.id)
-        const index = parseInt(commandArgs[1], 10) - 1
-        if (client.user_permission_check(message, musicIform, index)) return
-
-        commandArgs.splice(0, 2)
-        while (0 < commandArgs.length) {
-            if (commandArgs[0].indexOf('-') == 0) {
-                commandArgs[0] = commandArgs[0].slice(1)
-                if (musicIform.musiclist[index].func.indexOf(commandArgs[0]) == -1) {
-                    musicIform.musiclist[index].func.push(commandArgs[0])
-                }
+        element(message, client, commandArgs, (FuncIform, temp) => {
+            if (temp == -1) {
+                FuncIform.push(commandArgs[0])
             }
-            commandArgs.shift()
-        }
-
-        message.reply('성공적으로 요소를 추가했어요. :)')
+        }, '추가')
     }
 }
