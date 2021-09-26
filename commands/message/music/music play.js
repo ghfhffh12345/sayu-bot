@@ -8,7 +8,7 @@ const option = {
     maxResults: 1,
     type: 'video'
 }
-let key = require('../../../config.json').key.split(' ')
+let key = process.env.key.split(' ')
 
 // end service
 function lastProcessing(message, connection, client, sendmessage, err) {

@@ -1,6 +1,6 @@
 // Discord.js module
 const { Client, Intents, Collection} = require('discord.js')
-const { clientId, guildId, token } = require('./config.json')
+const { clientId, guildId, token } = process.env
 const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_INTEGRATIONS", "GUILD_VOICE_STATES"]})
 const { REST } = require('@discordjs/rest')
 const { Routes } = require('discord-api-types/v9')
