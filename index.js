@@ -70,13 +70,5 @@ MusicListener.prototype.emit = function (type, ...interaction) {
 
 client.musicSetting = new MusicListener()
 
-// function
-client.user_permission_check = function (message, musicIform, index) {
-    if (musicIform.musiclist[index].user != message.author.id) {
-        message.reply(`${message.author.username}님은 이 오디오를 시작하지 않았기 때문에 권한이 없습니다... :(`)
-        return true
-    }
-}
-
 // bot login
 client.login(token)

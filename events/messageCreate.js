@@ -1,4 +1,5 @@
 const { prefix } = require('../config.json')
+const { user_permission_check } = require('../functions')
 
 module.exports = {
     name: "messageCreate",
@@ -23,7 +24,7 @@ module.exports = {
                 if (message.member.voice.channel.id != musicIform.channel.id) return message.reply(`<#${musicIform.channel.id}> 음성 채널에 먼저 연결해주세요!`)
 
                 if (client.user_privileges) {
-                    if (client.user_permission_check(message, musicIform, 0)) return
+                    if (user_permission_check(message, musicIform, 0)) return
                 }
             } else if (!message.member.voice.channel) return message.reply('음성 채널에 먼저 연결해주세요!')
         }

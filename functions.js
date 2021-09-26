@@ -18,4 +18,12 @@ function element(message, client, commandArgs, callback, content) {
     } else message.channel.send('test')
 }
 
+function user_permission_check(message, musicIform, index) {
+    if (musicIform.musiclist[index].user != message.author.id) {
+        message.reply(`${message.author.username}님은 이 오디오를 시작하지 않았기 때문에 권한이 없습니다... :(`)
+        return true
+    }
+}
+
 exports.element = element
+exports.user_permission_check = user_permission_check
