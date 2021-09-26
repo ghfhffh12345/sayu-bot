@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('@discordjs/builders')
 const { MessageEmbed } = require('discord.js')
-const { prefix } = process.env
+const { prefix } = require('../../../index').config
 const fs = require('fs')
 const commandFolders = fs.readdirSync('./commands/message')
 

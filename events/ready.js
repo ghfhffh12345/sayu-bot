@@ -1,4 +1,5 @@
-const { prefix } = process.env
+const { prefix } = require('../index').config
+
 module.exports = {
     name: "ready",
     once: true,

@@ -2,7 +2,7 @@ function element(message, client, commandArgs, callback, content) {
     const musicIform = client.musiclist.get(message.guild.id)
     const index = parseInt(commandArgs[1], 10) - 1
     if (index < musicIform.musiclist.length && index > -1) {
-        if (client.user_permission_check(message, musicIform, index)) return
+        if (user_permission_check(message, musicIform, index)) return
 
         commandArgs.splice(0, 2)
         while (0 < commandArgs.length) {

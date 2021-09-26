@@ -1,4 +1,4 @@
-const { prefix } = process.env
+const { prefix } = require('../index').config
 const { user_permission_check } = require('../functions')
 
 module.exports = {
