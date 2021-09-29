@@ -56,20 +56,8 @@ try {
 }
 
 // events create
-function MusicListener() { this.events = {} }
-
-MusicListener.prototype.on = function (type, listener) {
-    this.events[type] = this.events[type] || []
-    this.events[type].push(listener)
-}
-
-MusicListener.prototype.emit = function (type, ...interaction) {
-    if (this.events[type]) {
-        this.events[type].forEach(function (listener) { listener(interaction) })
-    }
-}
-
-client.musicSetting = new MusicListener()
+const EventEmitter = require('events')
+client.musicSetting = new EventEmitter()
 
 // bot login
 client.login(token)

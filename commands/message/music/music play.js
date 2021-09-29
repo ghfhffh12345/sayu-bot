@@ -44,15 +44,15 @@ async function audioPlay(musicIform, connection, message, client) {
 
     // command interaction
     client.musicSetting.on('stop', index => {
-        if (index[0] != 0) {
-            musicIform.musiclist.splice(index[0], 1)
+        if (index > 0) {
+            musicIform.musiclist.splice(index, 1)
         } else {
             player.stop()
         }
     })
     client.musicSetting.on('pause', () => { player.pause() })
     client.musicSetting.on('unpause', () => { player.unpause() })
-    client.musicSetting.on('exist', () => { client.musicSetting.events = {} })
+    client.musicSetting.on('exist', () => { client.musicSetting.removeAllListeners() })
     client.musicSetting.on('end', () => {
         return lastProcessing(message, connection, client, 'sayu의 서비스를 종료했어요!')
     })
