@@ -1,7 +1,7 @@
 // Discord.js module
-exports.config = process.env
+const { config } = require('./exports/values')
 const { Client, Intents, Collection} = require('discord.js')
-const { clientId, guildId, token } = this.config
+const { clientId, guildId, token } = config
 const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES", "GUILD_INTEGRATIONS", "GUILD_VOICE_STATES"]})
 const { REST } = require('@discordjs/rest')
 const { Routes } = require('discord-api-types/v9')
@@ -55,7 +55,7 @@ try {
     console.error(error)
 }
 
-// events create
+// event emitter
 const EventEmitter = require('events')
 client.musicSetting = new EventEmitter()
 

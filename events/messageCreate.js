@@ -1,5 +1,5 @@
-const { prefix } = require('../index').config
-const { user_permission_check } = require('../functions')
+const { prefix } = require('../exports/values').config
+const { user_permission_check } = require('../exports/functions')
 
 module.exports = {
     name: "messageCreate",

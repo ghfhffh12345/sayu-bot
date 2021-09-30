@@ -1,4 +1,4 @@
-const { prefix } = require('../index').config
+const { prefix } = require('../exports/values').config
 
 module.exports = {
     name: "ready",
