@@ -34,7 +34,6 @@ async function audioPlay(musicIform, connection, message, client) {
     // when the audio is over
     player.once(AudioPlayerStatus.Idle, () => {
         client.musicSetting.emit('exist')
-        player.removeAllListeners()
         if (musicIform.musiclist[0].func.indexOf('loof') != -1) musicIform.musiclist.push(musicIform.musiclist[0])
         musicIform.musiclist.shift()
         if (musicIform.musiclist.length > 0) {
@@ -53,7 +52,10 @@ async function audioPlay(musicIform, connection, message, client) {
     })
     client.musicSetting.on('pause', () => { player.pause() })
     client.musicSetting.on('unpause', () => { player.unpause() })
-    client.musicSetting.on('exist', () => { client.musicSetting.removeAllListeners() })
+    client.musicSetting.on('exist', () => {
+        client.musicSetting.removeAllListeners()
+        player.removeAllListeners()
+    })
     client.musicSetting.on('end', () => {
         return lastProcessing(message, connection, client, 'sayu의 서비스를 종료했어요!')
     })
