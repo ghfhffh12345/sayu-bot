@@ -34,6 +34,7 @@ async function audioPlay(musicIform, connection, message, client) {
     // when the audio is over
     player.once(AudioPlayerStatus.Idle, () => {
         client.musicSetting.emit('exist')
+        player.removeAllListeners()
         if (musicIform.musiclist[0].func.indexOf('loof') != -1) musicIform.musiclist.push(musicIform.musiclist[0])
         musicIform.musiclist.shift()
         if (musicIform.musiclist.length > 0) {
