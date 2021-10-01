@@ -11,7 +11,8 @@ const option = {
 let key = require('../../../exports/values').config.key.split(' ')
 
 // end service
-function lastProcessing(message, connection, client, sendmessage, err) {
+function lastProcessing(musicConfig, sendmessage, err) {
+    const { connection, message, client } = musicConfig
     try {connection.destroy()} catch {}
     client.musiclist.delete(message.guild.id)
     client.musicSetting.emit('exist')
@@ -24,7 +25,8 @@ function lastProcessing(message, connection, client, sendmessage, err) {
 }
 
 // music start
-async function audioPlay(musicIform, connection, message, client) {
+async function audioPlay(musicIform, musicConfig) {
+    const { connection, message, client } = musicConfig
     const stream = await ytdl(musicIform.musiclist[0].music.link, { filter: 'audioonly' })
     const resurce = createAudioResource(stream, { inputType: StreamType.Arbitrary })
     const player = createAudioPlayer()
@@ -38,8 +40,8 @@ async function audioPlay(musicIform, connection, message, client) {
         musicIform.musiclist.shift()
         if (musicIform.musiclist.length > 0) {
             client.musicSetting.emit('exist')
-            audioPlay(client.musiclist.get(message.guild.id), connection, message, client)
-        } else lastProcessing(message, connection, client, '오디오 재생이 끝났어요! 서비스를 종료할게요! :)')
+            audioPlay(client.musiclist.get(message.guild.id), musicConfig)
+        } else lastProcessing(musicConfig, '오디오 재생이 끝났어요! 서비스를 종료할게요! :)')
     })
 
     // command interaction
@@ -55,9 +57,10 @@ async function audioPlay(musicIform, connection, message, client) {
     client.musicSetting.on('exist', () => {
         client.musicSetting.removeAllListeners()
         player.removeAllListeners()
+        process.removeAllListeners()
     })
     client.musicSetting.on('end', () => {
-        return lastProcessing(message, connection, client, 'sayu의 서비스를 종료했어요!')
+        return lastProcessing(musicConfig, 'sayu의 서비스를 종료했어요!')
     })
 }
 
@@ -109,17 +112,24 @@ module.exports = {
         } else message.delete()
         if (client.musiclist.has(message.guild.id)) return client.musiclist.get(message.guild.id).musiclist.push({ music: { title: searchdata.results[0].title, link: searchdata.results[0].link, id: searchdata.results[0].id }, func: MusicFunc, user: message.author.id })
 
-        process.once('uncaughtException', err => {
-            return lastProcessing(message, connection, client, '예상치 못한 오류가 발생했어요! 서비스를 종료할게요. :(', err)
-        })
-
-        // start audio
         const connection = joinVoiceChannel({
             channelId: message.member.voice.channel.id,
             guildId: message.guild.id,
             adapterCreator: message.guild.voiceAdapterCreator
         })
+
+        const musicConfig = {
+            message,
+            connection,
+            client
+        }
+
+        process.once('uncaughtException', err => {
+            return lastProcessing(musicConfig, '예상치 못한 오류가 발생했어요! 서비스를 종료할게요. :(', err)
+        })
+
+        // start audio
         client.musiclist.set(message.guild.id, { musiclist: [{ music: { title: searchdata.results[0].title, link: searchdata.results[0].link, id: searchdata.results[0].id }, func: MusicFunc, user: message.author.id, func: MusicFunc, user: message.author.id }], channel: { id: message.member.voice.channel.id, name: message.member.voice.channel.name }})
-        return audioPlay(client.musiclist.get(message.guild.id), connection, message, client)
+        return audioPlay(client.musiclist.get(message.guild.id), musicConfig)
     }
 }
