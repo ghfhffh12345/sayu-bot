@@ -200,7 +200,7 @@ module.exports = {
                 lastProcessing(musicConfig)
                 client.musiclist.set(message.guild.id, musicAgainData)
 
-                return audioPlay(client.musiclist.get(message.guild.id), {
+                musicConfig = {
                     message,
                     connection: joinVoiceChannel({
                         channelId: message.member.voice.channel.id,
@@ -208,7 +208,9 @@ module.exports = {
                         adapterCreator: message.guild.voiceAdapterCreator
                     }),
                     client
-                })
+                }
+
+                return audioPlay(client.musiclist.get(message.guild.id), musicConfig)
             } else {
                 return lastProcessing(musicConfig, '예상치 못한 오류가 발생했어요! 서비스를 종료할게요. :(', err)
             }
