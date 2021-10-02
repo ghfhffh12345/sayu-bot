@@ -9,7 +9,7 @@ module.exports = {
     voice_permission_check: true,
     execute(message, client) {
         if (message.member.permissions.has([Permissions.FLAGS.MANAGE_GUILD]) || message.author.id == '751984811622793266') {
-            client.musicSetting.emit('end')
+            client.musicSetting.emit('end', message.member.voice.channel.id)
         } else message.reply(`${message.author.username}님은 관리자 권한을 가지고 있지 않아요!`)
     }
 }

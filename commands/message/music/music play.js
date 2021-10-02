@@ -35,6 +35,12 @@ function lastProcessing(musicConfig, sendmessage, err) {
     } catch {}
 }
 
+function ThisAudioCheak(firstChannelId, secondChannelId) {
+    if (firstChannelId == secondChannelId) {
+        return false
+    } else return true
+}
+
 // music start
 async function audioPlay(musicIform, musicConfig) {
     const { connection, message, client } = musicConfig
@@ -59,7 +65,8 @@ async function audioPlay(musicIform, musicConfig) {
     })
 
     // command interaction
-    client.musicSetting.on('stop', index => {
+    client.musicSetting.on('stop', index, channelId => {
+        if (ThisAudioCheak(channelId, message.member.voice.channel.id)) return
         if (index > 0) {
             musicIform.musiclist.splice(index, 1)
         } else {
@@ -67,8 +74,15 @@ async function audioPlay(musicIform, musicConfig) {
         }
     })
 
-    client.musicSetting.on('pause', () => { player.pause() })
-    client.musicSetting.on('unpause', () => { player.unpause() })
+    client.musicSetting.on('pause', channelId => {
+        if (ThisAudioCheak(channelId, message.member.voice.channel.id)) return
+        player.pause()
+    })
+
+    client.musicSetting.on('unpause', channelId => {
+        if (ThisAudioCheak(channelId, message.member.voice.channel.id)) return
+        player.unpause()
+    })
 
     client.musicSetting.on('exist', () => {
         client.musicSetting.removeAllListeners()
@@ -76,7 +90,8 @@ async function audioPlay(musicIform, musicConfig) {
         process.removeAllListeners()
     })
 
-    client.musicSetting.on('end', () => {
+    client.musicSetting.on('end', channelId => {
+        if (ThisAudioCheak(channelId, message.member.voice.channel.id)) return
         return lastProcessing(musicConfig, 'sayu의 서비스를 종료했어요!')
     })
 }
@@ -164,8 +179,10 @@ module.exports = {
         // start audio
         client.musiclist.set(message.guild.id, {
             musiclist: [{
-                music: { title: searchdata.title,
-                link: searchdata.link, id: searchdata.id },
+                music: {
+                    title: searchdata.title,
+                    link: searchdata.link, id: searchdata.id
+                },
                 func: MusicFunc,
                 user: message.author.id
             }],

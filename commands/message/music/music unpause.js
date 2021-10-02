@@ -8,7 +8,7 @@ module.exports = {
     voice_permission_check: true,
     user_privileges: true,
     execute(message, client) {
-        client.musicSetting.emit('unpause')
+        client.musicSetting.emit('unpause', message.member.voice.channel.id)
         message.reply('현재 재생되고 있는 오디오를 일시중지 해제하였습니다. :)')
     }
 }

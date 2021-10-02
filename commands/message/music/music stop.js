@@ -9,7 +9,7 @@ module.exports = {
     user_privileges: true,
     execute(message, client, commandArgs) {
         let skipNumber = parseInt(commandArgs[1], 10) || 1
-        client.musicSetting.emit('stop', skipNumber - 1)
+        client.musicSetting.emit('stop', skipNumber - 1, message.member.voice.channel.id)
         message.reply(`해당 오디오를 건너뛰었습니다. :)`)
     }
 }
