@@ -161,15 +161,13 @@ module.exports = {
             return
         }
 
-        const connection = joinVoiceChannel({
-            channelId: message.member.voice.channel.id,
-            guildId: message.guild.id,
-            adapterCreator: message.guild.voiceAdapterCreator
-        })
-
-        const musicConfig = {
+        let musicConfig = {
             message,
-            connection,
+            connection: joinVoiceChannel({
+                channelId: message.member.voice.channel.id,
+                guildId: message.guild.id,
+                adapterCreator: message.guild.voiceAdapterCreator
+            }),
             client
         }
 
@@ -187,7 +185,7 @@ module.exports = {
         })
 
         let musicAgainData
-        process.once('uncaughtException', err => {
+        process.on('uncaughtException', err => {
             musicAgainData = {
                 musiclist: [],
                 channel: { id: message.member.voice.channel.id, name: message.member.voice.channel.name }
@@ -201,7 +199,16 @@ module.exports = {
             if (musicAgainData.musiclist.length > 0) {
                 lastProcessing(musicConfig)
                 client.musiclist.set(message.guild.id, musicAgainData)
-                return audioPlay(client.musiclist.get(message.guild.id), musicConfig)
+
+                return audioPlay(client.musiclist.get(message.guild.id), {
+                    message,
+                    connection: joinVoiceChannel({
+                        channelId: message.member.voice.channel.id,
+                        guildId: message.guild.id,
+                        adapterCreator: message.guild.voiceAdapterCreator
+                    }),
+                    client
+                })
             } else {
                 return lastProcessing(musicConfig, '예상치 못한 오류가 발생했어요! 서비스를 종료할게요. :(', err)
             }
