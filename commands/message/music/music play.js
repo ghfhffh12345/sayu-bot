@@ -65,7 +65,7 @@ async function audioPlay(musicIform, musicConfig) {
     })
 
     // command interaction
-    client.musicSetting.on('stop', index, channelId => {
+    client.musicSetting.on('stop', (index, channelId) => {
         if (ThisAudioCheak(channelId, message.member.voice.channel.id)) return
         if (index > 0) {
             musicIform.musiclist.splice(index, 1)
