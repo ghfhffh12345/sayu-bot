@@ -18,8 +18,8 @@ function lastProcessing(musicConfig, sendmessage, err) {
         client.musiclist.delete(message.guild.id)
         client.musicSetting.emit('exist')
 
-        if (sendmessage) {
-            if (err) {
+        if (sendmessage != null) {
+            if (err != null) {
                 sendmessage += ` => ${err}`
             }
             message.channel.send(sendmessage)
