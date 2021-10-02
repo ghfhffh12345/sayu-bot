@@ -72,6 +72,7 @@ module.exports = {
     number_of_elements: 2,
     voice_permission_check: true,
     async execute(message, client, commandArgs) {
+
         // Save music add-on
         commandArgs.shift()
         const MusicFunc = []
