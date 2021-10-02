@@ -13,15 +13,18 @@ let key = require('../../../exports/values').config.key.split(' ')
 // end service
 function lastProcessing(musicConfig, sendmessage, err) {
     const { connection, message, client } = musicConfig
-    try {connection.destroy()} catch {}
-    client.musiclist.delete(message.guild.id)
-    client.musicSetting.emit('exist')
+    try {
+        connection.destroy()
+        client.musiclist.delete(message.guild.id)
+        client.musicSetting.emit('exist')
 
-    if (sendmessage) {
-        let Sendmessage = sendmessage
-        if (err) Sendmessage += ` => ${err}`
-        message.channel.send(Sendmessage)
-    }
+        if (sendmessage) {
+            if (err) {
+                sendmessage += ` => ${err}`
+            }
+            message.channel.send(sendmessage)
+        }
+    } catch {}
 }
 
 // music start
@@ -36,8 +39,11 @@ async function audioPlay(musicIform, musicConfig) {
     // when the audio is over
     player.once(AudioPlayerStatus.Idle, () => {
         client.musicSetting.emit('exist')
-        if (musicIform.musiclist[0].func.indexOf('loof') != -1) musicIform.musiclist.push(musicIform.musiclist[0])
+        if (musicIform.musiclist[0].func.indexOf('loof') != -1) {
+            musicIform.musiclist.push(musicIform.musiclist[0])
+        }
         musicIform.musiclist.shift()
+
         if (musicIform.musiclist.length > 0) {
             client.musicSetting.emit('exist')
             audioPlay(client.musiclist.get(message.guild.id), musicConfig)
@@ -52,13 +58,16 @@ async function audioPlay(musicIform, musicConfig) {
             player.stop()
         }
     })
+
     client.musicSetting.on('pause', () => { player.pause() })
     client.musicSetting.on('unpause', () => { player.unpause() })
+
     client.musicSetting.on('exist', () => {
         client.musicSetting.removeAllListeners()
         player.removeAllListeners()
         process.removeAllListeners()
     })
+
     client.musicSetting.on('end', () => {
         return lastProcessing(musicConfig, 'sayu의 서비스를 종료했어요!')
     })
@@ -90,11 +99,14 @@ module.exports = {
             searchlink = `https://www.youtube.com/watch?v=${commandArgs[0]}`
             MusicFunc.slice(MusicFunc.indexOf('id'), 1)
         }
-        for (var i = client.keyWith; i < key.length; i++) {
+        for (var index = client.keyWith; index < key.length; index++) {
             try {
-                searchdata = await search(searchlink, {...option, key: key[i]})
+                searchdata = await search(searchlink, {...option, key: key[index]})
                 searchdata = searchdata.results[0]
-                if (i != client.keyWith) client.keyWith = i
+
+                if (index != client.keyWith) {
+                    client.keyWith = index
+                }
                 break
             } catch {}
         }

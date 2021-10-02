@@ -1,1 +1,1 @@
-exports.config = require('../config.json')
+exports.config = process.env
