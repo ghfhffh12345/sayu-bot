@@ -27,11 +27,12 @@ function lastProcessing(musicConfig, sendmessage, err) {
         client.musiclist.delete(message.guild.id)
         client.musicSetting.emit('exist')
 
-        if (err) {
-            sendmessage += ` => ${err}`
+        if (sendmessage) {
+            if (err) {
+                sendmessage += ` => ${err}`
+            }
+            message.channel.send(sendmessage)
         }
-
-        message.channel.send(sendmessage)
     } catch {}
 }
 
@@ -172,10 +173,6 @@ module.exports = {
             client
         }
 
-        process.once('uncaughtException', err => {
-            return lastProcessing(musicConfig, '예상치 못한 오류가 발생했어요! 서비스를 종료할게요. :(', err)
-        })
-
         // start audio
         client.musiclist.set(message.guild.id, {
             musiclist: [{
@@ -187,6 +184,26 @@ module.exports = {
                 user: message.author.id
             }],
             channel: { id: message.member.voice.channel.id, name: message.member.voice.channel.name }
+        })
+
+        process.once('uncaughtException', err => {
+            let musicAgainData = {
+                musiclist: [],
+                channel: { id: message.member.voice.channel.id, name: message.member.voice.channel.name }
+            }
+            client.musiclist.get(message.guild.id).musiclist.forEach((value) => {
+                if (value.func.indexOf('again') != -1) {
+                    musicAgainData.musiclist.push(value)
+                }
+            })
+
+            if (musicAgainData.musiclist.length > 0) {
+                lastProcessing(musicConfig)
+                client.musiclist.set(message.guild.id, musicAgainData)
+                return audioPlay(client.musiclist.get(message.guild.id), musicConfig)
+            } else {
+                return lastProcessing(musicConfig, '예상치 못한 오류가 발생했어요! 서비스를 종료할게요. :(', err)
+            }
         })
 
         return audioPlay(client.musiclist.get(message.guild.id), musicConfig)
