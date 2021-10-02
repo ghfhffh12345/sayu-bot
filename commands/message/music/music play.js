@@ -93,6 +93,7 @@ module.exports = {
         for (var i = client.keyWith; i < key.length; i++) {
             try {
                 searchdata = await search(searchlink, {...option, key: key[i]})
+                searchdata = searchdata.results[0]
                 if (i != client.keyWith) client.keyWith = i
                 break
             } catch {}
@@ -104,14 +105,22 @@ module.exports = {
             let musicTurn = '오디오를 성공적으로 불러왔어요! :)'
             if (client.musiclist.has(message.guild.id)) musicTurn = '오디오를 성공적으로 대기열에 추가했어요! :)'
             const MusicEmbed = new MessageEmbed()
-                .setTitle(searchdata.results[0].title)
-                .setURL(searchdata.results[0].link)
+                .setTitle(searchdata.title)
+                .setURL(searchdata.link)
                 .setDescription(musicTurn)
-                .setImage(`https://i.ytimg.com/vi/${searchdata.results[0].id}/hqdefault.jpg`)
+                .setImage(`https://i.ytimg.com/vi/${searchdata.id}/hqdefault.jpg`)
                 .setTimestamp()
             message.reply({ embeds: [MusicEmbed] })
         } else message.delete()
-        if (client.musiclist.has(message.guild.id)) return client.musiclist.get(message.guild.id).musiclist.push({ music: { title: searchdata.results[0].title, link: searchdata.results[0].link, id: searchdata.results[0].id }, func: MusicFunc, user: message.author.id })
+
+        if (client.musiclist.has(message.guild.id)) {
+            client.musiclist.get(message.guild.id).musiclist.push({
+                music: { title: searchdata.title, link: searchdata.link, id: searchdata.id },
+                func: MusicFunc,
+                user: message.author.id
+            })
+            return
+        }
 
         const connection = joinVoiceChannel({
             channelId: message.member.voice.channel.id,
@@ -130,7 +139,16 @@ module.exports = {
         })
 
         // start audio
-        client.musiclist.set(message.guild.id, { musiclist: [{ music: { title: searchdata.results[0].title, link: searchdata.results[0].link, id: searchdata.results[0].id }, func: MusicFunc, user: message.author.id, func: MusicFunc, user: message.author.id }], channel: { id: message.member.voice.channel.id, name: message.member.voice.channel.name }})
+        client.musiclist.set(message.guild.id, {
+            musiclist: [{
+                music: { title: searchdata.title,
+                link: searchdata.link, id: searchdata.id },
+                func: MusicFunc,
+                user: message.author.id
+            }],
+            channel: { id: message.member.voice.channel.id, name: message.member.voice.channel.name }
+        })
+
         return audioPlay(client.musiclist.get(message.guild.id), musicConfig)
     }
 }
