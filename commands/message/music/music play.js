@@ -1,6 +1,13 @@
 const { SlashCommandBuilder } = require('@discordjs/builders')
 const { MessageEmbed } = require('discord.js')
-const { StreamType, createAudioPlayer, createAudioResource, joinVoiceChannel, AudioPlayerStatus } = require('@discordjs/voice')
+const {
+    StreamType,
+    createAudioPlayer,
+    createAudioResource,
+    joinVoiceChannel,
+    AudioPlayerStatus
+} = require('@discordjs/voice')
+
 const ytdl = require('ytdl-core')
 const search = require('youtube-search')
 
@@ -10,6 +17,8 @@ const option = {
 }
 let key = require('../../../exports/values').config.key.split(' ')
 
+const elements = ['id', 'hide', 'loof', 'again']
+
 // end service
 function lastProcessing(musicConfig, sendmessage, err) {
     const { connection, message, client } = musicConfig
@@ -18,12 +27,11 @@ function lastProcessing(musicConfig, sendmessage, err) {
         client.musiclist.delete(message.guild.id)
         client.musicSetting.emit('exist')
 
-        if (sendmessage != null) {
-            if (err != null) {
-                sendmessage += ` => ${err}`
-            }
-            message.channel.send(sendmessage)
+        if (err) {
+            sendmessage += ` => ${err}`
         }
+
+        message.channel.send(sendmessage)
     } catch {}
 }
 
@@ -87,7 +95,10 @@ module.exports = {
         const MusicFunc = []
         while (0 < commandArgs.length) {
             if (commandArgs[0].indexOf('-') == 0) {
-                if (MusicFunc.indexOf(commandArgs[0].slice(1)) == -1) MusicFunc.push(commandArgs[0].slice(1))
+                commandArgs[0] = commandArgs[0].slice(1)
+                if (MusicFunc.indexOf(commandArgs[0]) == -1 && elements.indexOf(commandArgs[0]) != -1) {
+                    MusicFunc.push(commandArgs[0])
+                }
                 commandArgs.shift()
             } else break
         }
