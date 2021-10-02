@@ -186,8 +186,9 @@ module.exports = {
             channel: { id: message.member.voice.channel.id, name: message.member.voice.channel.name }
         })
 
+        let musicAgainData
         process.once('uncaughtException', err => {
-            let musicAgainData = {
+            musicAgainData = {
                 musiclist: [],
                 channel: { id: message.member.voice.channel.id, name: message.member.voice.channel.name }
             }
